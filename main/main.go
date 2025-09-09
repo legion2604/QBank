@@ -6,10 +6,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Get secret key from environment variable for security
-
-// ACCESS TOKEN
-
 func main() {
 	controller.ConnectDB()
 	r := gin.Default()
@@ -34,5 +30,5 @@ func main() {
 		apiAuth.GET("/reports/getHistory", controller.GetHistory)
 	}
 
-	r.Run("0.0.0.0:3030")
+	r.Run("localhost:8080")
 }
