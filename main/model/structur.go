@@ -1,10 +1,13 @@
 package model
 
 import (
-	"database/sql"
 	"time"
 )
 
+type VerificationRequest struct {
+	Code  string `json:"code"`
+	Phone string `json:"phone"`
+}
 type MonthSummary struct {
 	TotalOwedToUser int `json:"total_owed_to_user"`
 	TotalOwedByUser int `json:"total_owed_by_user"`
@@ -84,23 +87,23 @@ type userDept struct {
 }
 
 type UserLoans struct {
-	Id           int            `json:"id"`
-	LenderId     sql.NullInt64  `json:"lender_id"`
-	BorrowedId   sql.NullInt64  `json:"borrower_id"`
-	Amount       int            `json:"amount"`
-	InterestRate int            `json:"interest_rate"`
-	CreatedAt    sql.NullString `json:"created_at"`
-	DueDate      sql.NullString `json:"due_date"`
-	Status       sql.NullString `json:"status"`
+	Id           int    `json:"id"`
+	LenderId     int    `json:"lender_id"`
+	BorrowedId   int    `json:"borrower_id"`
+	Amount       int    `json:"amount"`
+	InterestRate int    `json:"interest_rate"`
+	CreatedAt    string `json:"created_at"`
+	DueDate      string `json:"due_date"`
+	Status       string `json:"status"`
 }
 
 type AddDeptStruct struct {
-	LenderId   int       `json:"lender_id"`
-	BorrowerId int       `json:"borrower_id"`
-	Amount     int       `json:"amount"`
-	DueDate    time.Time `json:"due_date"` // Gin будет парсить дату автоматически
-	Interest   int       `json:"interest"`
-	Status     string    `json:"status"`
+	LenderId   int    `json:"lender_id"`
+	BorrowerId int    `json:"borrower_id"`
+	Amount     int    `json:"amount"`
+	DueDate    string `json:"due_date"`
+	Interest   int    `json:"interest"`
+	Status     string `json:"status"`
 }
 
 type RemDeptStruct struct {
@@ -108,9 +111,9 @@ type RemDeptStruct struct {
 }
 
 type Payment struct {
-	Id     int            `json:"id"`
-	LoanId int            `json:"loan_id"`
-	Amount int            `json:"amount"`
-	Type   string         `json:"type"`
-	PaidAt sql.NullString `json:"paid_at"`
+	Id     int    `json:"id"`
+	LoanId int    `json:"loan_id"`
+	Amount int    `json:"amount"`
+	Type   string `json:"type"`
+	PaidAt string `json:"paid_at"`
 }

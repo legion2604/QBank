@@ -8,11 +8,20 @@ import (
 	"net/http"
 )
 
+// HandleVerification godoc
+// @Summary Verify user by code
+// @Description Checks if the verification code matches and if the phone number exists in the database
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param data body model.VerificationRequest true "Verify true"
+// @Success 200 {object} model.NumVerRes "Verification result"
+// @Failure 400 {object} model.NumVerRes "Invalid request body"
+// @Failure 500 {object} gin.H "Server error"
+// @Router /handleVer [post]
 func HandleVerification(c *gin.Context) {
-	var req struct {
-		Code  string `json:"code"`
-		Phone string `json:"phone"`
-	}
+
+	var req model.VerificationRequest
 
 	// Fixed JSON field names to match the struct
 	response := model.NumVerRes{IsVer: false, IsInData: false}
@@ -48,6 +57,17 @@ func HandleVerification(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 } //success
 
+// HandleSignUp godoc
+// @Summary Register a new user
+// @Description Creates a new user in the system
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param data body model.SignupJson true "Signup data"
+// @Success 200 {object} model.StatusR "Signup successful"
+// @Failure 400 {object} model.StatusR "Invalid request body"
+// @Failure 500 {object} model.StatusR "Server error"
+// @Router /signup [post]
 func HandleSignUp(c *gin.Context) {
 	var data model.SignupJson
 	res := model.StatusR{Status: false}

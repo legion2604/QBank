@@ -10,6 +10,18 @@ import (
 	"time"
 )
 
+// GetLoansUsers godoc
+// @Summary Get all loans for a user
+// @Description Returns all loans where the user is either lender or borrower
+// @Tags Loans
+// @Accept json
+// @Produce json
+// @Param id query int true "User ID"
+// @Success 200 {array} model.UserLoans
+// @Failure 400 {object} model.StatusR
+// @Failure 500 {object} model.StatusR
+// @Security BearerAuth
+// @Router /loans/getAllLoans [get]
 func GetLoansUsers(c *gin.Context) {
 
 	var arr []model.UserLoans
@@ -55,6 +67,18 @@ func GetLoansUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, arr)
 } // success
 
+// GetUser godoc
+// @Summary Get user by passport ID
+// @Description Returns detailed information about a user by passport ID
+// @Tags Loans
+// @Accept json
+// @Produce json
+// @Param pid query string true "Passport ID"
+// @Success 200 {object} model.UserInfo
+// @Failure 404 {object} model.StatusR
+// @Failure 500 {object} model.StatusR
+// @Security BearerAuth
+// @Router /user [get]
 func GetUser(c *gin.Context) {
 	id := c.Query("pid")
 
@@ -76,6 +100,18 @@ func GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, req)
 } // success
 
+// GetHistory godoc
+// @Summary Get payment history for a user
+// @Description Returns all payments where the user is lender or borrower
+// @Tags Loans
+// @Accept json
+// @Produce json
+// @Param id query int true "User ID"
+// @Success 200 {array} model.Payment
+// @Failure 400 {object} model.StatusR
+// @Failure 500 {object} model.StatusR
+// @Security BearerAuth
+// @Router /reports/getHistory [get]
 func GetHistory(c *gin.Context) {
 	idStr := c.Query("id")
 	num, err := strconv.Atoi(idStr)
@@ -110,6 +146,20 @@ func GetHistory(c *gin.Context) {
 	c.JSON(http.StatusOK, payments)
 } // success
 
+// GetMonthSummary godoc
+// @Summary Get monthly loan summary for a user
+// @Description Returns the total owed to and by the user for a specific month
+// @Tags Loans
+// @Accept json
+// @Produce json
+// @Param userId query int true "User ID"
+// @Param year query int true "Year"
+// @Param month query int true "Month (1-12)"
+// @Success 200 {object} model.MonthSummary
+// @Failure 400 {object} model.StatusR
+// @Failure 500 {object} model.StatusR
+// @Security BearerAuth
+// @Router /reports [get]
 func GetMonthSummary(c *gin.Context) {
 	// Retrieve the user's ID from the request's query parameters.
 	// This is less secure than using a token but fulfills the request.
