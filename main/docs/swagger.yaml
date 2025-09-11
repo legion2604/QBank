@@ -1,0 +1,400 @@
+basePath: /api
+definitions:
+  gin.H:
+    additionalProperties: {}
+    type: object
+  model.AddDeptStruct:
+    properties:
+      amount:
+        type: integer
+      borrower_id:
+        type: integer
+      due_date:
+        type: string
+      interest:
+        type: integer
+      lender_id:
+        type: integer
+      status:
+        type: string
+    type: object
+  model.MonthSummary:
+    properties:
+      total_owed_by_user:
+        type: integer
+      total_owed_to_user:
+        type: integer
+    type: object
+  model.NumVerRes:
+    properties:
+      is_in_data:
+        type: boolean
+      is_ver:
+        type: boolean
+    type: object
+  model.Payment:
+    properties:
+      amount:
+        type: integer
+      id:
+        type: integer
+      loan_id:
+        type: integer
+      paid_at:
+        type: string
+      type:
+        type: string
+    type: object
+  model.RemDeptStruct:
+    properties:
+      id:
+        type: integer
+    type: object
+  model.SignupJson:
+    properties:
+      birth_date:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      number_phone:
+        type: string
+      pid:
+        type: string
+      surname:
+        type: string
+    type: object
+  model.StatusR:
+    properties:
+      status:
+        type: boolean
+    type: object
+  model.UserInfo:
+    properties:
+      birth_date:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      number_phone:
+        type: string
+      passport_id:
+        type: string
+      surname:
+        type: string
+    type: object
+  model.UserLoans:
+    properties:
+      amount:
+        type: integer
+      borrower_id:
+        type: integer
+      created_at:
+        type: string
+      due_date:
+        type: string
+      id:
+        type: integer
+      interest_rate:
+        type: integer
+      lender_id:
+        type: integer
+      status:
+        type: string
+    type: object
+  model.VerificationRequest:
+    properties:
+      code:
+        type: string
+      phone:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API для управления долгами
+  termsOfService: http://swagger.io/terms/
+  title: Project_5 API
+  version: "1.0"
+paths:
+  /deps/addDept:
+    post:
+      consumes:
+      - application/json
+      description: Создаёт новый займ между пользователями
+      parameters:
+      - description: Loan data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.AddDeptStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.StatusR'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.StatusR'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.StatusR'
+      security:
+      - BearerAuth: []
+      summary: Add new loan
+      tags:
+      - Deps
+  /deps/remDept:
+    post:
+      consumes:
+      - application/json
+      description: Delete a loan from the database
+      parameters:
+      - description: Loan ID to remove
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.RemDeptStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.StatusR'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.StatusR'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.StatusR'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.StatusR'
+      security:
+      - BearerAuth: []
+      summary: Remove loan
+      tags:
+      - Deps
+  /handleVer:
+    post:
+      consumes:
+      - application/json
+      description: Checks if the verification code matches and if the phone number
+        exists in the database
+      parameters:
+      - description: Verify true
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.VerificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Verification result
+          schema:
+            $ref: '#/definitions/model.NumVerRes'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/model.NumVerRes'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Verify user by code
+      tags:
+      - Auth
+  /loans/getAllLoans:
+    get:
+      consumes:
+      - application/json
+      description: Returns all loans where the user is either lender or borrower
+      parameters:
+      - description: User ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserLoans'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.StatusR'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.StatusR'
+      security:
+      - BearerAuth: []
+      summary: Get all loans for a user
+      tags:
+      - Loans
+  /reports:
+    get:
+      consumes:
+      - application/json
+      description: Returns the total owed to and by the user for a specific month
+      parameters:
+      - description: User ID
+        in: query
+        name: userId
+        required: true
+        type: integer
+      - description: Year
+        in: query
+        name: year
+        required: true
+        type: integer
+      - description: Month (1-12)
+        in: query
+        name: month
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.MonthSummary'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.StatusR'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.StatusR'
+      security:
+      - BearerAuth: []
+      summary: Get monthly loan summary for a user
+      tags:
+      - Loans
+  /reports/getHistory:
+    get:
+      consumes:
+      - application/json
+      description: Returns all payments where the user is lender or borrower
+      parameters:
+      - description: User ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Payment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.StatusR'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.StatusR'
+      security:
+      - BearerAuth: []
+      summary: Get payment history for a user
+      tags:
+      - Loans
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user in the system
+      parameters:
+      - description: Signup data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.SignupJson'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Signup successful
+          schema:
+            $ref: '#/definitions/model.StatusR'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/model.StatusR'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/model.StatusR'
+      summary: Register a new user
+      tags:
+      - Auth
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: Returns detailed information about a user by passport ID
+      parameters:
+      - description: Passport ID
+        in: query
+        name: pid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UserInfo'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.StatusR'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.StatusR'
+      security:
+      - BearerAuth: []
+      summary: Get user by passport ID
+      tags:
+      - Loans
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
